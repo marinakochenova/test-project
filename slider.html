@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slider with Pagination</title>
+    <style>
+        .slider {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 300px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .slides {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slide {
+            min-width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .slide:nth-child(1) { background: red; }
+        .slide:nth-child(2) { background: blue; }
+        .slide:nth-child(3) { background: green; }
+        .slide:nth-child(4) { background: orange; }
+        .slide:nth-child(5) { background: purple; }
+
+        .controls {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+        }
+
+        .control {
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            margin: 0 5px;
+            background: gray;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .dot.active {
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="slider">
+        <div class="slides">
+            <div class="slide">Slide 1</div>
+            <div class="slide">Slide 2</div>
+            <div class="slide">Slide 3</div>
+            <div class="slide">Slide 4</div>
+            <div class="slide">Slide 5</div>
+        </div>
+        <div class="controls">
+            <button class="control" id="prev">Prev</button>
+            <button class="control" id="next">Next</button>
+        </div>
+    </div>
+    <div class="pagination" id="pagination"></div>
+
+    <script>
+        const slides = document.querySelector('.slides');
+        const slideElements = document.querySelectorAll('.slide');
+        const prevButton = document.getElementById('prev');
+        const nextButton = document.getElementById('next');
+        const pagination = document.getElementById('pagination');
+
+        let currentIndex = 0;
+
+        // Initialize Pagination
+        slideElements.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            if (index === currentIndex) dot.classList.add('active');
+            dot.dataset.index = index;
+            pagination.appendChild(dot);
+        });
+
+        const dots = document.querySelectorAll('.dot');
+
+        function updateSlider() {
+            slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+            dots.forEach(dot => dot.classList.remove('active'));
+            dots[currentIndex].classList.add('active');
+
+            // Enable/disable buttons
+            prevButton.disabled = currentIndex === 0;
+            nextButton.disabled = currentIndex === slideElements.length - 1;
+        }
+
+        function moveToSlide(index) {
+            currentIndex = index;
+            updateSlider();
+        }
+
+        prevButton.addEventListener('click', () => {
+            if (currentIndex > 0) moveToSlide(currentIndex - 1);
+        });
+
+        nextButton.addEventListener('click', () => {
+            if (currentIndex < slideElements.length - 1) moveToSlide(currentIndex + 1);
+        });
+
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const index = parseInt(dot.dataset.index, 10);
+                moveToSlide(index);
+            });
+        });
+
+        // Initial setup
+        updateSlider();
+    </script>
+</body>
+</html>
